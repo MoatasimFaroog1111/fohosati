@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Fohosati Admin
  * Description: منصة فحوصاتي: إدارة المعامل والفروع والفحوصات والتوفر والمناطق، مع واجهة عامة عربية للبحث ودليل المعامل وصفحات الفروع.
- * Version: 0.5.0
+ * Version: 0.6.0
  * Author: Fohosati
  * Text Domain: fohosati-admin
  */
@@ -10,7 +10,7 @@
 if (!defined('ABSPATH')) { exit; }
 
 final class Fohosati_Admin_Plugin {
-    const VERSION = '0.5.0';
+    const VERSION = '0.6.0';
     const OPTION_DB_VERSION = 'fohosati_db_version';
     const OPTION_SEEDED = 'fohosati_seeded_v4';
     private static $instance = null;
@@ -637,10 +637,64 @@ final class Fohosati_Admin_Plugin {
         $latest = $wpdb->get_results("SELECT b.code AS branch_code,b.branch_name_ar,b.address,b.phone,b.whatsapp,b.opening_hours,b.latitude,b.longitude,l.name_ar AS laboratory_name_ar,a.area_ar FROM {$this->tables['branches']} b LEFT JOIN {$this->tables['laboratories']} l ON l.code=b.laboratory_code LEFT JOIN {$this->tables['areas']} a ON a.code=b.area_code WHERE b.publication_status='Published' ORDER BY b.id DESC LIMIT 6", ARRAY_A);
         ob_start(); ?>
         <div class="foh-site" dir="rtl">
-            <section class="foh-hero-public"><div class="foh-container"><span class="foh-eyebrow">دليل المعامل الطبية في الخرطوم</span><h1>اعثر على المعمل الذي يوفر <em>فحصك</em> بسرعة</h1><p>ابحث باسم الفحص أو اختصاره، اختر منطقتك، ثم تواصل مباشرة مع الفرع.</p><?php echo $this->render_search_form(); ?><div class="foh-trust-row"><span>✓ بيانات Pilot متحققة</span><span>✓ بحث عربي وإنجليزي</span><span>✓ اتصال وواتساب وخريطة</span></div></div></section>
-            <section class="foh-section"><div class="foh-container"><div class="foh-stats"><div><strong><?php echo number_format_i18n($stats['branches']); ?>+</strong><span>فرع معمل</span></div><div><strong><?php echo number_format_i18n($stats['tests']); ?>+</strong><span>فحص قابل للبحث</span></div><div><strong><?php echo number_format_i18n($stats['labs']); ?>+</strong><span>معمل في الدليل</span></div></div></div></section>
-            <section class="foh-section alt"><div class="foh-container"><div class="foh-section-head"><div><span class="foh-eyebrow">ابدأ من الفحص</span><h2>فحوصات شائعة</h2></div><a href="<?php echo esc_url($this->public_page_url('search')); ?>">عرض البحث الكامل ←</a></div><div class="foh-test-grid"><?php foreach($popular as $t): ?><a class="foh-test-tile" href="<?php echo esc_url($this->public_page_url('search',['foh_q'=>$t['abbreviation']?:$t['name_ar']])); ?>"><strong><?php echo esc_html($t['name_ar']); ?></strong><span><?php echo esc_html($t['abbreviation'] ?: $t['name_en']); ?></span><small><?php echo number_format_i18n((int)$t['offers_count']); ?> فرع</small></a><?php endforeach; ?></div></div></section>
-            <section class="foh-section"><div class="foh-container"><div class="foh-section-head"><div><span class="foh-eyebrow">الدليل</span><h2>معامل وفروع مضافة</h2></div><a href="<?php echo esc_url($this->public_page_url('labs')); ?>">كل المعامل ←</a></div><div class="foh-card-grid"><?php foreach($latest as $r) echo $this->result_card($r,false); ?></div></div></section>
+            <section class="foh-hero-public">
+                <div class="foh-container">
+                    <span class="foh-eyebrow">دليل المعامل الطبية في الخرطوم</span>
+                    <h1>اعثر على المعمل الذي يوفر <em>فحصك</em> بسرعة</h1>
+                    <p>ابحث باسم الفحص أو اختصاره، اختر منطقتك، ثم تواصل مباشرة مع الفرع.</p>
+                    <?php echo $this->render_search_form(); ?>
+                    <div class="foh-trust-row"><span>✓ بيانات Pilot متحققة</span><span>✓ بحث عربي وإنجليزي</span><span>✓ اتصال وواتساب وخريطة</span></div>
+                </div>
+            </section>
+            <section class="foh-section">
+                <div class="foh-container">
+                    <div class="foh-stats"><div><strong><?php echo number_format_i18n($stats['branches']); ?>+</strong><span>فرع معمل</span></div><div><strong><?php echo number_format_i18n($stats['tests']); ?>+</strong><span>فحص قابل للبحث</span></div><div><strong><?php echo number_format_i18n($stats['labs']); ?>+</strong><span>معمل في الدليل</span></div></div>
+                </div>
+            </section>
+            <section class="foh-section alt">
+                <div class="foh-container">
+                    <div class="foh-section-head"><div><span class="foh-eyebrow">خدمات فحوصاتي</span><h2>كل ما تحتاجه قبل زيارة المعمل</h2></div></div>
+                    <div class="foh-feature-grid">
+                        <article class="foh-feature-card"><span>🔎</span><h3>بحث ذكي للفحوصات</h3><p>ابحث بالعربية أو الإنجليزية أو بالاختصار للوصول لنتائج دقيقة بسرعة.</p></article>
+                        <article class="foh-feature-card"><span>📍</span><h3>فروع قريبة منك</h3><p>فلترة حسب المنطقة مع روابط خرائط مباشرة لتسهيل الوصول.</p></article>
+                        <article class="foh-feature-card"><span>💬</span><h3>تواصل فوري</h3><p>اتصال أو واتساب مباشرة مع الفرع للاستفسار عن التوفر والسعر.</p></article>
+                        <article class="foh-feature-card"><span>🛡️</span><h3>بيانات موثقة</h3><p>عرض بيانات مراجعة للتأكد من موثوقية معلومات التواصل الأساسية.</p></article>
+                    </div>
+                </div>
+            </section>
+            <section class="foh-section">
+                <div class="foh-container">
+                    <div class="foh-section-head"><div><span class="foh-eyebrow">ابدأ من الفحص</span><h2>فحوصات شائعة</h2></div><a href="<?php echo esc_url($this->public_page_url('search')); ?>">عرض البحث الكامل ←</a></div>
+                    <div class="foh-test-grid"><?php foreach($popular as $t): ?><a class="foh-test-tile" href="<?php echo esc_url($this->public_page_url('search',['foh_q'=>$t['abbreviation']?:$t['name_ar']])); ?>"><strong><?php echo esc_html($t['name_ar']); ?></strong><span><?php echo esc_html($t['abbreviation'] ?: $t['name_en']); ?></span><small><?php echo number_format_i18n((int)$t['offers_count']); ?> فرع</small></a><?php endforeach; ?></div>
+                </div>
+            </section>
+            <section class="foh-section alt">
+                <div class="foh-container">
+                    <div class="foh-section-head"><div><span class="foh-eyebrow">كيف تستخدم المنصة؟</span><h2>3 خطوات بسيطة</h2></div></div>
+                    <div class="foh-steps">
+                        <div class="foh-step"><strong>1</strong><h3>ابحث عن الفحص</h3><p>اكتب اسم الفحص أو اختصاره وحدد منطقتك.</p></div>
+                        <div class="foh-step"><strong>2</strong><h3>قارن النتائج</h3><p>راجع الفروع المتاحة ومعلومات التواصل وساعات العمل.</p></div>
+                        <div class="foh-step"><strong>3</strong><h3>تواصل مباشرة</h3><p>اتصل أو راسل واتساب لتأكيد التوفر والسعر قبل الزيارة.</p></div>
+                    </div>
+                </div>
+            </section>
+            <section class="foh-section">
+                <div class="foh-container">
+                    <div class="foh-section-head"><div><span class="foh-eyebrow">الدليل</span><h2>معامل وفروع مضافة</h2></div><a href="<?php echo esc_url($this->public_page_url('labs')); ?>">كل المعامل ←</a></div>
+                    <div class="foh-card-grid"><?php foreach($latest as $r) echo $this->result_card($r,false); ?></div>
+                </div>
+            </section>
+            <section class="foh-section alt">
+                <div class="foh-container">
+                    <div class="foh-section-head"><div><span class="foh-eyebrow">الأسئلة الشائعة</span><h2>FAQ</h2></div></div>
+                    <div class="foh-faq">
+                        <details class="foh-faq-item"><summary>هل فحوصاتي يقدم تشخيصًا طبيًا؟</summary><p>لا. فحوصاتي دليل معلومات واتصال فقط، ولا يقدم تشخيصًا أو علاجًا.</p></details>
+                        <details class="foh-faq-item"><summary>هل الأسعار المعروضة نهائية؟</summary><p>الأسعار إرشادية بناءً على آخر تحديث. يُنصح دائمًا بالتأكيد المباشر مع المعمل قبل الزيارة.</p></details>
+                        <details class="foh-faq-item"><summary>كيف أعرف أن الفحص متوفر؟</summary><p>نتائج البحث تعرض الفروع المتاحة، لكن الأفضل الاتصال أو واتساب لتأكيد التوفر الفوري.</p></details>
+                        <details class="foh-faq-item"><summary>هل يمكن اقتراح إضافة معمل أو تحديث بيانات؟</summary><p>نعم، يمكن تحديث وإدارة البيانات عبر لوحة إدارة المنصة بشكل مستمر.</p></details>
+                    </div>
+                </div>
+            </section>
             <section class="foh-section foh-disclaimer"><div class="foh-container"><strong>تنبيه مهم</strong><p>فحوصاتي دليل معلومات واتصال، وليس جهة تشخيص أو علاج. تأكد من المعمل مباشرة من توفر الفحص والسعر قبل الزيارة.</p></div></section>
         </div><?php return ob_get_clean();
     }

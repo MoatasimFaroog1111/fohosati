@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', function () {
       menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
       menuToggle.setAttribute('aria-label', isOpen ? 'إغلاق القائمة' : 'فتح القائمة');
     });
+
+    primaryNav.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        primaryNav.classList.remove('is-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.setAttribute('aria-label', 'فتح القائمة');
+      });
+    });
   }
 
   document.querySelectorAll('.foh-search-box').forEach(function (form) {
@@ -46,4 +54,18 @@ document.addEventListener('DOMContentLoaded', function () {
       observer.observe(item);
     });
   }
+
+  var faqItems = document.querySelectorAll('.foh-faq-item');
+  faqItems.forEach(function (item) {
+    item.addEventListener('toggle', function () {
+      if (!item.open) {
+        return;
+      }
+      faqItems.forEach(function (other) {
+        if (other !== item) {
+          other.open = false;
+        }
+      });
+    });
+  });
 });
