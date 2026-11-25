@@ -29,6 +29,78 @@
 3. افتح **فحوصاتي** من لوحة الإدارة لمراجعة البيانات.
 4. افتح الصفحات المنشأة تلقائياً من الموقع العام.
 
+## التشغيل محليًا على اللابتوب (Docker + WP-CLI)
+
+انسخ الأوامر التالية كما هي في التيرمينال:
+
+```bash
+git clone https://github.com/MoatasimFaroog1111/fohosati.git
+cd fohosati
+
+cat <<'YAML' > docker-compose.yml
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: rootpass
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - db_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:6.8-php8.2-apache
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_data:/var/www/html
+      - ./fohosati-admin:/var/www/html/wp-content/plugins/fohosati-admin
+
+volumes:
+  db_data:
+  wp_data:
+YAML
+
+docker compose up -d
+
+docker run --rm --network "$(basename "$PWD")_default" \
+  -e WORDPRESS_DB_HOST=db:3306 \
+  -e WORDPRESS_DB_USER=wordpress \
+  -e WORDPRESS_DB_PASSWORD=wordpress \
+  -e WORDPRESS_DB_NAME=wordpress \
+  -v "$(basename "$PWD")_wp_data:/var/www/html" \
+  -v "$PWD/fohosati-admin:/var/www/html/wp-content/plugins/fohosati-admin" \
+  wordpress:cli-php8.2 \
+  sh -lc '
+    wp core is-installed --allow-root || wp core install \
+      --url="http://localhost:8080" \
+      --title="Fohosati Local" \
+      --admin_user="admin" \
+      --admin_password="admin123456" \
+      --admin_email="admin@example.com" \
+      --skip-email \
+      --allow-root
+    wp plugin activate fohosati-admin --allow-root
+  '
+```
+
+بعدها ادخل على:
+
+- الموقع: `http://localhost:8080`
+- لوحة التحكم: `http://localhost:8080/wp-admin`
+- بيانات الدخول: `admin / admin123456`
+
 ## ملاحظات
 
 - الواجهة RTL ومتجاوبة للموبايل.
