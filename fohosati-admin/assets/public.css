@@ -277,6 +277,13 @@ body.admin-bar .foh-global-header {
   font-size: 14px;
 }
 
+.foh-hero-cta {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
 .foh-section {
   padding: 58px 0;
 }
@@ -708,6 +715,100 @@ body.admin-bar .foh-global-header {
   color: var(--foh-muted);
 }
 
+.foh-testimonials {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.foh-quote {
+  margin: 0;
+  border: 1px solid var(--foh-border);
+  border-radius: 16px;
+  background: #fff;
+  padding: 18px;
+}
+
+.foh-quote p {
+  margin: 0 0 10px;
+  color: #334b48;
+}
+
+.foh-quote cite {
+  font-style: normal;
+  color: var(--foh-muted);
+  font-size: 13px;
+}
+
+.foh-partner-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.foh-partner-pill {
+  border: 1px dashed #b6d8d3;
+  background: #fbfefe;
+  color: #406460;
+  border-radius: 12px;
+  text-align: center;
+  padding: 14px 10px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.foh-contact-form {
+  border: 1px solid var(--foh-border);
+  border-radius: 18px;
+  background: #fff;
+  padding: 22px;
+}
+
+.foh-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.foh-contact-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 14px;
+  color: #375754;
+  font-weight: 700;
+}
+
+.foh-contact-grid label.is-full {
+  grid-column: 1 / -1;
+}
+
+.foh-contact-grid input,
+.foh-contact-grid select,
+.foh-contact-grid textarea {
+  border: 1px solid var(--foh-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font: inherit;
+  color: var(--foh-ink);
+}
+
+.foh-contact-grid textarea {
+  resize: vertical;
+}
+
+.foh-contact-actions {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.foh-contact-actions small {
+  color: var(--foh-muted);
+}
+
 .foh-global-footer {
   background: #0e2f2c;
   color: #fff;
@@ -790,8 +891,14 @@ body.admin-bar .foh-global-header {
   }
 
   .foh-feature-grid,
-  .foh-steps {
+  .foh-steps,
+  .foh-testimonials,
+  .foh-contact-grid {
     grid-template-columns: 1fr;
+  }
+
+  .foh-partner-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .foh-card-grid {
@@ -907,5 +1014,9 @@ body.admin-bar .foh-global-header {
   .foh-trust-row {
     gap: 9px;
     flex-direction: column;
+  }
+
+  .foh-contact-form {
+    padding: 16px;
   }
 }

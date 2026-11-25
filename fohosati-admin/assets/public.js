@@ -68,4 +68,36 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   });
+
+  var contactForm = document.querySelector('.foh-contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var email = contactForm.getAttribute('data-contact-email') || '';
+      if (!email) {
+        return;
+      }
+
+      var name = contactForm.querySelector('[name="name"]').value.trim();
+      var phone = contactForm.querySelector('[name="phone"]').value.trim();
+      var senderEmail = contactForm.querySelector('[name="email"]').value.trim();
+      var type = contactForm.querySelector('[name="type"]').value.trim();
+      var message = contactForm.querySelector('[name="message"]').value.trim();
+
+      if (!name || !phone || !message) {
+        return;
+      }
+
+      var subject = encodeURIComponent('طلب جديد عبر نموذج فحوصاتي: ' + type);
+      var body = encodeURIComponent(
+        'الاسم: ' + name + '\n' +
+        'الهاتف: ' + phone + '\n' +
+        'البريد: ' + (senderEmail || 'غير مذكور') + '\n' +
+        'نوع الطلب: ' + type + '\n\n' +
+        'الرسالة:\n' + message
+      );
+
+      window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
+    });
+  }
 });

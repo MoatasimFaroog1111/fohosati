@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Fohosati Admin
  * Description: منصة فحوصاتي: إدارة المعامل والفروع والفحوصات والتوفر والمناطق، مع واجهة عامة عربية للبحث ودليل المعامل وصفحات الفروع.
- * Version: 0.6.0
+ * Version: 0.7.0
  * Author: Fohosati
  * Text Domain: fohosati-admin
  */
@@ -10,7 +10,7 @@
 if (!defined('ABSPATH')) { exit; }
 
 final class Fohosati_Admin_Plugin {
-    const VERSION = '0.6.0';
+    const VERSION = '0.7.0';
     const OPTION_DB_VERSION = 'fohosati_db_version';
     const OPTION_SEEDED = 'fohosati_seeded_v4';
     private static $instance = null;
@@ -633,6 +633,7 @@ final class Fohosati_Admin_Plugin {
     public function shortcode_home($atts=[]) {
         global $wpdb;
         $stats = $this->public_stats();
+        $contact_email = sanitize_email(get_option('admin_email'));
         $popular = $wpdb->get_results("SELECT t.code,t.name_ar,t.name_en,t.abbreviation,COUNT(o.id) AS offers_count FROM {$this->tables['tests']} t LEFT JOIN {$this->tables['offers']} o ON o.test_code=t.code AND o.availability_status='Confirmed Available' WHERE t.record_status='Active' GROUP BY t.code,t.name_ar,t.name_en,t.abbreviation ORDER BY offers_count DESC,t.id ASC LIMIT 8", ARRAY_A);
         $latest = $wpdb->get_results("SELECT b.code AS branch_code,b.branch_name_ar,b.address,b.phone,b.whatsapp,b.opening_hours,b.latitude,b.longitude,l.name_ar AS laboratory_name_ar,a.area_ar FROM {$this->tables['branches']} b LEFT JOIN {$this->tables['laboratories']} l ON l.code=b.laboratory_code LEFT JOIN {$this->tables['areas']} a ON a.code=b.area_code WHERE b.publication_status='Published' ORDER BY b.id DESC LIMIT 6", ARRAY_A);
         ob_start(); ?>
@@ -643,6 +644,10 @@ final class Fohosati_Admin_Plugin {
                     <h1>اعثر على المعمل الذي يوفر <em>فحصك</em> بسرعة</h1>
                     <p>ابحث باسم الفحص أو اختصاره، اختر منطقتك، ثم تواصل مباشرة مع الفرع.</p>
                     <?php echo $this->render_search_form(); ?>
+                    <div class="foh-hero-cta">
+                        <a class="foh-btn primary" href="<?php echo esc_url($this->public_page_url('search')); ?>">ابدأ البحث الآن</a>
+                        <a class="foh-btn" href="<?php echo esc_url($this->public_page_url('labs')); ?>">استعرض كل المعامل</a>
+                    </div>
                     <div class="foh-trust-row"><span>✓ بيانات Pilot متحققة</span><span>✓ بحث عربي وإنجليزي</span><span>✓ اتصال وواتساب وخريطة</span></div>
                 </div>
             </section>
@@ -686,6 +691,29 @@ final class Fohosati_Admin_Plugin {
             </section>
             <section class="foh-section alt">
                 <div class="foh-container">
+                    <div class="foh-section-head"><div><span class="foh-eyebrow">قصص ثقة</span><h2>ماذا يقول المستخدمون؟</h2></div></div>
+                    <div class="foh-testimonials">
+                        <blockquote class="foh-quote"><p>وفرت عليّ وقت طويل. كتبت اسم الفحص وطلعت لي الفروع المتاحة مباشرة.</p><cite>— مستخدم من الخرطوم</cite></blockquote>
+                        <blockquote class="foh-quote"><p>الميزة الأفضل هي الربط السريع مع واتساب المعمل بدون تعقيد.</p><cite>— ولي أمر مريض</cite></blockquote>
+                        <blockquote class="foh-quote"><p>واجهة واضحة وسهلة، خاصة في الجوال أثناء التنقل.</p><cite>— مراجع مختبرات</cite></blockquote>
+                    </div>
+                </div>
+            </section>
+            <section class="foh-section">
+                <div class="foh-container">
+                    <div class="foh-section-head"><div><span class="foh-eyebrow">شركاء النجاح</span><h2>معامل تظهر في الدليل</h2></div></div>
+                    <div class="foh-partner-grid">
+                        <span class="foh-partner-pill">مختبر شريك 01</span>
+                        <span class="foh-partner-pill">مختبر شريك 02</span>
+                        <span class="foh-partner-pill">مختبر شريك 03</span>
+                        <span class="foh-partner-pill">مختبر شريك 04</span>
+                        <span class="foh-partner-pill">مختبر شريك 05</span>
+                        <span class="foh-partner-pill">مختبر شريك 06</span>
+                    </div>
+                </div>
+            </section>
+            <section class="foh-section alt">
+                <div class="foh-container">
                     <div class="foh-section-head"><div><span class="foh-eyebrow">الأسئلة الشائعة</span><h2>FAQ</h2></div></div>
                     <div class="foh-faq">
                         <details class="foh-faq-item"><summary>هل فحوصاتي يقدم تشخيصًا طبيًا؟</summary><p>لا. فحوصاتي دليل معلومات واتصال فقط، ولا يقدم تشخيصًا أو علاجًا.</p></details>
@@ -693,6 +721,24 @@ final class Fohosati_Admin_Plugin {
                         <details class="foh-faq-item"><summary>كيف أعرف أن الفحص متوفر؟</summary><p>نتائج البحث تعرض الفروع المتاحة، لكن الأفضل الاتصال أو واتساب لتأكيد التوفر الفوري.</p></details>
                         <details class="foh-faq-item"><summary>هل يمكن اقتراح إضافة معمل أو تحديث بيانات؟</summary><p>نعم، يمكن تحديث وإدارة البيانات عبر لوحة إدارة المنصة بشكل مستمر.</p></details>
                     </div>
+                </div>
+            </section>
+            <section class="foh-section">
+                <div class="foh-container">
+                    <div class="foh-section-head"><div><span class="foh-eyebrow">تواصل معنا</span><h2>نموذج تواصل سريع</h2></div></div>
+                    <form class="foh-contact-form" data-contact-email="<?php echo esc_attr($contact_email); ?>">
+                        <div class="foh-contact-grid">
+                            <label><span>الاسم</span><input type="text" name="name" required placeholder="اكتب اسمك"></label>
+                            <label><span>رقم الهاتف</span><input type="text" name="phone" required placeholder="09xxxxxxxx"></label>
+                            <label><span>البريد الإلكتروني</span><input type="email" name="email" placeholder="name@example.com"></label>
+                            <label><span>نوع الطلب</span><select name="type"><option value="اقتراح">اقتراح</option><option value="تحديث بيانات">تحديث بيانات</option><option value="دعم">دعم</option></select></label>
+                            <label class="is-full"><span>الرسالة</span><textarea name="message" rows="4" required placeholder="اكتب رسالتك هنا..."></textarea></label>
+                        </div>
+                        <div class="foh-contact-actions">
+                            <button type="submit" class="foh-btn primary">إرسال الرسالة</button>
+                            <small>سيتم فتح تطبيق البريد لإرسال الرسالة مباشرة.</small>
+                        </div>
+                    </form>
                 </div>
             </section>
             <section class="foh-section foh-disclaimer"><div class="foh-container"><strong>تنبيه مهم</strong><p>فحوصاتي دليل معلومات واتصال، وليس جهة تشخيص أو علاج. تأكد من المعمل مباشرة من توفر الفحص والسعر قبل الزيارة.</p></div></section>
