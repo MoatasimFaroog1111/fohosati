@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Fohosati Admin
  * Description: منصة فحوصاتي: إدارة المعامل والفروع والفحوصات والتوفر والمناطق، مع واجهة عامة عربية للبحث ودليل المعامل وصفحات الفروع.
- * Version: 0.4.0
+ * Version: 0.5.0
  * Author: Fohosati
  * Text Domain: fohosati-admin
  */
@@ -10,7 +10,7 @@
 if (!defined('ABSPATH')) { exit; }
 
 final class Fohosati_Admin_Plugin {
-    const VERSION = '0.4.0';
+    const VERSION = '0.5.0';
     const OPTION_DB_VERSION = 'fohosati_db_version';
     const OPTION_SEEDED = 'fohosati_seeded_v4';
     private static $instance = null;

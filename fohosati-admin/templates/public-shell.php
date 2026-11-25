@@ -21,7 +21,8 @@ $labs_url_foh   = $labs_id ? get_permalink($labs_id) : home_url('/');
             <span class="foh-brand-mark">ف</span>
             <span class="foh-brand-copy"><strong>فحوصاتي</strong><small>دليل المعامل الطبية</small></span>
         </a>
-        <nav class="foh-global-nav" aria-label="التنقل الرئيسي">
+        <button class="foh-menu-toggle" type="button" aria-expanded="false" aria-controls="foh-primary-nav" aria-label="فتح القائمة">☰</button>
+        <nav id="foh-primary-nav" class="foh-global-nav" aria-label="التنقل الرئيسي">
             <a <?php echo is_page($home_id) ? 'class="is-active"' : ''; ?> href="<?php echo esc_url($home_url_foh); ?>">الرئيسية</a>
             <a <?php echo is_page($search_id) ? 'class="is-active"' : ''; ?> href="<?php echo esc_url($search_url_foh); ?>">البحث عن فحص</a>
             <a <?php echo is_page($labs_id) ? 'class="is-active"' : ''; ?> href="<?php echo esc_url($labs_url_foh); ?>">دليل المعامل</a>
