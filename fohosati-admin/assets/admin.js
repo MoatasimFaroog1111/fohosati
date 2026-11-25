@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('.foh-delete').forEach(function(a){a.addEventListener('click',function(e){if(!confirm('هل أنت متأكد من حذف هذا السجل؟'))e.preventDefault();});});});
